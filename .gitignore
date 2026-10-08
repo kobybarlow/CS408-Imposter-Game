@@ -1,0 +1,18 @@
+
+# AWS private keys
+*.pem
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Ruby / Rails
+/log/*
+/tmp/*
+/storage/*
+/vendor/bundle
+
+# Windows
+Thumbs.db
+Desktop.ini
