@@ -16,3 +16,12 @@
 # Windows
 Thumbs.db
 Desktop.ini
+
+# Nested Git repository backup
+imposter-game/.git-backup/
+
+# Secrets and private keys
+.env
+.env.*
+*.pem
+**/config/master.key

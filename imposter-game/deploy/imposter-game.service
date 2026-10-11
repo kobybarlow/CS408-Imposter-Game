@@ -1,0 +1,25 @@
+
+[Unit]
+Description=Imposter Game Rails Application
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/imposter-game
+
+Environment=RAILS_ENV=production
+Environment=RAILS_LOG_TO_STDOUT=1
+Environment=RAILS_SERVE_STATIC_FILES=1
+Environment=RBENV_ROOT=/home/ubuntu/.rbenv
+Environment=PATH=/home/ubuntu/.rbenv/shims:/home/ubuntu/.rbenv/bin:/usr/local/bin:/usr/bin:/bin
+
+EnvironmentFile=/etc/imposter-game.env
+
+ExecStart=/home/ubuntu/.rbenv/shims/bundle exec rails server -b 127.0.0.1 -p 3000
+
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
