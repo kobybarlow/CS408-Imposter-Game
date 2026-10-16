@@ -41,6 +41,7 @@ trap 'rm -f "$ARCHIVE"' EXIT
 
 tar -czf "$ARCHIVE" \
     --exclude='.git' \
+    --exclude='.git-backup' \
     --exclude='.env' \
     --exclude='.env.*' \
     --exclude='*.pem' \
