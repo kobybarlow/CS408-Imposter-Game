@@ -19,12 +19,6 @@ if ! command -v bundle >/dev/null 2>&1; then
     exit 1
 fi
 
-# Check SQLite
-if ! command -v sqlite3 >/dev/null 2>&1; then
-    echo "ERROR: SQLite3 is not installed."
-    exit 1
-fi
-
 # Check Ruby version
 required_ruby=$(tr -d '[:space:]' < .ruby-version)
 required_ruby="${required_ruby#ruby-}"
