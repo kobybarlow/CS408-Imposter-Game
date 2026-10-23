@@ -1,24 +1,48 @@
-# README
+# Imposter Game
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A party game built with Ruby on Rails and SQLite.
 
-Things you may want to cover:
+The planned game lets players share one device. Everyone sees a secret
+word except one player—the imposter. Players give clues and then vote
+on who they think the imposter is.
 
-* Ruby version
+## Current Features
 
-* System dependencies
+- Database models for categories, words, games, and players
+- Three sample categories with five words each
+- Automated tests
+- Startup and EC2 deployment scripts
 
-* Configuration
+Gameplay and category editing are still in development.
 
-* Database creation
+## Run the App
 
-* Database initialization
+On Ubuntu, run this from the project folder:
 
-* How to run the test suite
+```bash
+./start.sh
+```
 
-* Services (job queues, cache servers, search engines, etc.)
+The script installs dependencies, prepares the database, loads sample
+data, and starts the app.
 
-* Deployment instructions
+On Windows with Ruby 4.0.4 and Bundler installed, run:
 
-* ...
+```bash
+bundle install
+bundle exec rails db:prepare db:seed
+bundle exec rails server
+```
+
+Open http://localhost:3000.
+
+## Run Tests
+
+```bash
+bundle exec rails db:migrate RAILS_ENV=test
+bundle exec rails test RAILS_ENV=test
+```
+
+## Live Site
+
+http://52.34.222.19/
