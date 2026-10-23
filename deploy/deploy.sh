@@ -23,36 +23,33 @@ if [ ! -f "$KEY" ]; then
     exit 1
 fi
 
-for tool in ssh scp tar curl; do
+for tool in git ssh scp tar curl; do
     if ! command -v "$tool" >/dev/null 2>&1; then
         echo "ERROR: Missing required tool: $tool"
         exit 1
     fi
 done
 
+KEY="$(cd "$(dirname "$KEY")" && pwd)/$(basename "$KEY")"
+
 cd "$(dirname "$0")/.."
+
+if [ -n "$(git status --porcelain)" ]; then
+    echo "ERROR: Commit your changes before deploying."
+    exit 1
+fi
+
+COMMIT="$(git rev-parse HEAD)"
+echo "Deploying commit: $COMMIT"
 
 echo "Running Rails tests..."
 bundle exec rails test
 
-echo "Packaging application..."
+echo "Packaging committed application..."
 ARCHIVE="$(mktemp --suffix=.tar.gz)"
 trap 'rm -f "$ARCHIVE"' EXIT
 
-tar -czf "$ARCHIVE" \
-    --exclude='.git' \
-    --exclude='.git-backup' \
-    --exclude='.env' \
-    --exclude='.env.*' \
-    --exclude='*.pem' \
-    --exclude='log' \
-    --exclude='tmp' \
-    --exclude='storage' \
-    --exclude='node_modules' \
-    --exclude='vendor/bundle' \
-    --exclude='config/master.key' \
-    --exclude='config/credentials' \
-    .
+git archive --format=tar.gz --output="$ARCHIVE" "$COMMIT"
 
 echo "Uploading application..."
 scp -i "$KEY" "$ARCHIVE" "ubuntu@$HOST:/tmp/imposter-game.tar.gz"
@@ -82,6 +79,7 @@ set +a
 bundle install
 
 RAILS_ENV=production bundle exec rails db:prepare
+RAILS_ENV=production bundle exec rails db:seed
 RAILS_ENV=production bundle exec rails assets:precompile
 
 sudo systemctl restart imposter-game.service
@@ -89,7 +87,7 @@ REMOTE
 
 echo "Checking health endpoint..."
 curl --fail --retry 10 --retry-delay 3 \
-    "http://$HOST/api/health"
+    "http://$HOST/up"
 
 echo
 echo "Deployment complete!"

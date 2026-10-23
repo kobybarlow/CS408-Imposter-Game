@@ -104,6 +104,9 @@ bundle install
 echo "Preparing database..."
 bundle exec rails db:prepare
 
+echo "Loading sample categories and words..."
+bundle exec rails db:seed
+
 echo "Starting Imposter Game..."
 echo "Open http://127.0.0.1:3000"
 
