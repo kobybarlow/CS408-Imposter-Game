@@ -107,7 +107,9 @@ bundle exec rails db:prepare
 echo "Loading sample categories and words..."
 bundle exec rails db:seed
 
-echo "Starting Imposter Game..."
-echo "Open http://127.0.0.1:3000"
+PORT="${PORT:-3000}"
 
-exec bundle exec rails server -b 0.0.0.0 -p 3000
+echo "Starting Imposter Game..."
+echo "Open http://127.0.0.1:$PORT"
+
+exec bundle exec rails server -b 0.0.0.0 -p "$PORT"
