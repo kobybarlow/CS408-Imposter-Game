@@ -1,0 +1,51 @@
+
+<div class="container mt-5">
+  <h1><%= @category.name %></h1>
+
+  <p><%= @category.description %></p>
+
+  <h3>Words</h3>
+
+  <% if @words.any? %>
+    <ul class="list-group mb-3">
+      <% @words.each do |word| %>
+        <li class="list-group-item">
+          <%= word.word %>
+
+          <%= link_to "Edit",
+              edit_category_word_path(@category, word),
+              class: "btn btn-sm btn-primary" %>
+
+          <%= button_to "Delete",
+              category_word_path(@category, word),
+              method: :delete,
+              data: { turbo_confirm: "Delete this word?" },
+              class: "btn btn-sm btn-danger" %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>No words have been added to this category yet.</p>
+  <% end %>
+
+  <h3>Add a Word</h3>
+
+  <%= form_with model: [@category, Word.new] do |form| %>
+    <div class="mb-3">
+      <%= form.label :word, "New Word" %>
+      <%= form.text_field :word, class: "form-control" %>
+    </div>
+
+    <%= form.submit "Add Word", class: "btn btn-success" %>
+  <% end %>
+
+  <hr>
+
+  <%= link_to "Edit Category",
+      edit_category_path(@category),
+      class: "btn btn-primary" %>
+
+  <%= link_to "Back to Categories",
+      categories_path,
+      class: "btn btn-secondary" %>
+</div>

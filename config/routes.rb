@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  resources :categories do
+  resources :words, only: [ :create, :edit, :update, :destroy ]
+end
   get "home/index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -15,6 +18,6 @@ Rails.application.routes.draw do
   root "home#index"
 
   get "/api/health", to: proc {
-  [200, { "Content-Type" => "text/plain" }, ["OK"]]
+  [ 200, { "Content-Type" => "text/plain" }, [ "OK" ] ]
 }
 end

@@ -1,0 +1,37 @@
+
+<div class="container mt-5">
+  <h1>Edit Category</h1>
+
+  <%= form_with model: @category do |form| %>
+    <% if @category.errors.any? %>
+      <div class="alert alert-danger">
+        <% @category.errors.full_messages.each do |error| %>
+          <p><%= error %></p>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="mb-3">
+      <%= form.label :name, "Category Name" %>
+      <%= form.text_field :name, class: "form-control" %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :description %>
+      <%= form.text_area :description, class: "form-control" %>
+    </div>
+
+    <%= form.submit "Save Changes", class: "btn btn-primary" %>
+
+    <%= link_to "Cancel", category_path(@category),
+        class: "btn btn-secondary" %>
+  <% end %>
+
+  <hr>
+
+  <%= button_to "Delete Category",
+      category_path(@category),
+      method: :delete,
+      data: { turbo_confirm: "Are you sure you want to delete this category?" },
+      class: "btn btn-danger" %>
+</div>

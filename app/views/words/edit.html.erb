@@ -1,0 +1,27 @@
+
+<div class="container mt-5">
+  <h1>Edit Word</h1>
+
+  <p>Category: <%= @category.name %></p>
+
+  <%= form_with model: [@category, @word] do |form| %>
+    <% if @word.errors.any? %>
+      <div class="alert alert-danger">
+        <% @word.errors.full_messages.each do |error| %>
+          <p><%= error %></p>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="mb-3">
+      <%= form.label :word, "Word" %>
+      <%= form.text_field :word, class: "form-control" %>
+    </div>
+
+    <%= form.submit "Save Changes", class: "btn btn-primary" %>
+
+    <%= link_to "Cancel",
+        category_path(@category),
+        class: "btn btn-secondary" %>
+  <% end %>
+</div>

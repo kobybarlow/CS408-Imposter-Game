@@ -1,0 +1,51 @@
+
+<div class="container mt-5">
+  <h1>Categories</h1>
+
+  <p>Browse categories or create your own!</p>
+
+  <div class="d-flex gap-2 mb-4">
+    <%= form_with url: categories_path, method: :get, local: true,
+                  class: "d-flex gap-2" do |form| %>
+      <%= form.text_field :search,
+          value: params[:search],
+          placeholder: "Search categories...",
+          class: "form-control" %>
+
+      <%= form.submit "Search", class: "btn btn-primary" %>
+    <% end %>
+
+    <%= link_to "Create Category", new_category_path,
+        class: "btn btn-success" %>
+  </div>
+
+  <div class="row">
+    <% @categories.each do |category| %>
+      <div class="col-md-4 mb-3">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title"><%= category.name %></h5>
+
+            <p class="card-text">
+              <%= category.description %>
+            </p>
+
+            <p>
+              <%= pluralize(category.words.count, "word") %>
+            </p>
+
+            <%= link_to "View Category", category_path(category),
+                class: "btn btn-outline-primary" %>
+
+            <%= link_to "Edit", edit_category_path(category),
+                class: "btn btn-outline-secondary" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @categories.empty? %>
+    <p>No categories found.</p>
+  <% end %>
+</div>
