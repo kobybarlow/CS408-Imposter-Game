@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :games, only: [ :new, :create, :show ]
   resources :categories do
   resources :words, only: [ :create, :edit, :update, :destroy ]
 end

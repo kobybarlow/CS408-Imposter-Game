@@ -1,0 +1,38 @@
+<div class="container mt-4">
+  <h1>Set Up a Game</h1>
+      <% if @error.present? %>
+    <div class="alert alert-danger" role="alert">
+      <%= @error %>
+    </div>
+  <% end %>
+
+  <%= form_with url: games_path, scope: :game do |form| %>
+    <div class="mb-3">
+      <%= form.label :category_id, "Category", class: "form-label" %>
+
+      <%= form.collection_select :category_id,
+          @categories, :id, :name,
+          { prompt: "Choose a category" },
+          { class: "form-select", required: true } %>
+    </div>
+
+    <fieldset class="mb-3">
+      <legend>Players</legend>
+      <p>Enter 2–10 players. Leave unused fields blank.</p>
+
+      <% 10.times do |index| %>
+        <div class="mb-2">
+          <%= label_tag "player_#{index}", "Player #{index + 1}",
+              class: "form-label" %>
+
+          <%= text_field_tag "game[player_names][]", nil,
+              id: "player_#{index}",
+              class: "form-control",
+              required: index < 2 %>
+        </div>
+      <% end %>
+    </fieldset>
+
+    <%= form.submit "Create Game", class: "btn btn-primary" %>
+  <% end %>
+</div>
