@@ -1,0 +1,16 @@
+<div class="container mt-4">
+  <h1>Clue Round</h1>
+
+  <p>It's <strong><%= @current_player.name %></strong>'s turn.</p>
+  <p>Give the group a clue without saying the secret word.</p>
+
+  <h2>Turn Order</h2>
+  <ol>
+    <% @game.players.each do |player| %>
+      <li><%= player.name %></li>
+    <% end %>
+  </ol>
+<%= button_to "Next Turn", next_turn_game_path(@game),
+    params: { position: @current_player.turn_order },
+    class: "btn btn-primary" %>
+</div>

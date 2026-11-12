@@ -78,7 +78,60 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     )
   end
 
-    private
+    test "players reveal their roles one at a time" do
+    game = create_reveal_game
+    word = game.secret_word.word
+
+    get reveal_game_path(game)
+    assert_response :success
+    assert_select "strong", text: "Alex"
+    refute_includes response.body, word
+
+    post reveal_role_game_path(game)
+    assert_select "h1", text: "Alex's Role"
+    assert_select "strong", text: word
+
+    post pass_role_game_path(game), params: { position: 1 }
+    assert_redirected_to reveal_game_path(game)
+    follow_redirect!
+    assert_select "strong", text: "Blair"
+    refute_includes response.body, word
+    refute_includes response.body, "You are the Imposter"
+
+    post reveal_role_game_path(game)
+    assert_select "h1", text: "Blair's Role"
+    assert_includes response.body, "You are the Imposter"
+    refute_includes response.body, word
+
+    post pass_role_game_path(game), params: { position: 2 }
+    assert_redirected_to game_path(game)
+    follow_redirect!
+    assert_select "h1", text: "Clue Round"
+    assert_equal "playing", game.reload.status
+  end
+
+  test "clue turns advance in order and wrap to the first player" do
+    game = create_reveal_game
+    game.update!(status: "playing")
+
+    get game_path(game)
+    assert_select "p strong", text: "Alex"
+
+    post next_turn_game_path(game), params: { position: 1 }
+    assert_redirected_to game_path(game)
+    follow_redirect!
+    assert_select "p strong", text: "Blair"
+
+    get game_path(game)
+    assert_select "p strong", text: "Blair"
+
+    post next_turn_game_path(game), params: { position: 2 }
+    assert_redirected_to game_path(game)
+    follow_redirect!
+    assert_select "p strong", text: "Alex"
+  end
+
+  private
 
   def assert_setup_rejected(attributes)
     assert_no_difference [ "Game.count", "Player.count" ] do
@@ -88,5 +141,12 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
     assert_select ".alert-danger", count: 1
     assert_select "form"
+  end
+
+  def create_reveal_game
+    game = Game.create!(category: @category, secret_word: @category.words.first)
+    game.players.create!(name: "Alex", turn_order: 1, is_imposter: false)
+    game.players.create!(name: "Blair", turn_order: 2, is_imposter: true)
+    game
   end
 end

@@ -16,6 +16,8 @@
 
   <p>The secret word and imposter have been selected.</p>
 
+  <%= link_to "Start Role Reveals", reveal_game_path(@game), class: "btn btn-primary" %>
+
   <%= link_to "Set Up Another Game", new_game_path,
       class: "btn btn-primary" %>
 </div>

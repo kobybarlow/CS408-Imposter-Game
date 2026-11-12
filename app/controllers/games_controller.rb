@@ -53,6 +53,62 @@ class GamesController < ApplicationController
   end
 
   def show
+  @game = Game.find(params[:id])
+
+    if @game.status == "playing"
+      @current_player = @game.players.find_by!(turn_order: @game.clue_position)
+      render :play
+    end
+  end
+  def reveal
     @game = Game.find(params[:id])
+    return redirect_to game_path(@game) unless @game.status == "setup"
+
+    @player = @game.players.find_by!(turn_order: @game.reveal_position)
+  end
+
+  def reveal_role
+    @game = Game.find(params[:id])
+    return redirect_to game_path(@game), status: :see_other unless @game.status == "setup"
+
+    @player = @game.players.find_by!(turn_order: @game.reveal_position)
+    @role_visible = true
+
+    response.headers["Cache-Control"] = "no-store"
+    render :reveal
+  end
+
+  def pass_role
+    game = Game.find(params[:id])
+
+    game.with_lock do
+      if game.status == "setup" && params[:position] == game.reveal_position.to_s
+        next_position = game.reveal_position + 1
+
+        if game.players.exists?(turn_order: next_position)
+          game.update!(reveal_position: next_position)
+        else
+          game.update!(status: "playing")
+        end
+      end
+    end
+
+    destination = game.status == "setup" ? reveal_game_path(game) : game_path(game)
+    redirect_to destination, status: :see_other
+  end
+
+  def next_turn
+    game = Game.find(params[:id])
+
+    game.with_lock do
+      if game.status == "playing" && params[:position] == game.clue_position.to_s
+        next_position = game.clue_position + 1
+        next_position = 1 unless game.players.exists?(turn_order: next_position)
+
+        game.update!(clue_position: next_position)
+      end
+    end
+
+    redirect_to game_path(game), status: :see_other
   end
 end

@@ -1,5 +1,12 @@
 Rails.application.routes.draw do
-  resources :games, only: [ :new, :create, :show ]
+  resources :games, only: [ :new, :create, :show ] do
+    member do
+      get :reveal
+      post :reveal_role
+      post :pass_role
+      post :next_turn
+    end
+  end
   resources :categories do
   resources :words, only: [ :create, :edit, :update, :destroy ]
 end

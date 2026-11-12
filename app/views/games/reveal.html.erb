@@ -1,0 +1,23 @@
+<div class="container mt-4">
+  <% if @role_visible %>
+    <h1><%= @player.name %>'s Role</h1>
+
+    <% if @player.is_imposter? %>
+      <p>You are the Imposter, blend in.</p>
+    <% else %>
+      <p>Your secret word is <strong><%= @game.secret_word.word %></strong>.</p>
+    <% end %>
+
+    <%= button_to "Hide and Pass", pass_role_game_path(@game),
+        params: { position: @player.turn_order },
+        class: "btn btn-primary", form: { data: { turbo: false } } %>
+  <% else %>
+    <h1>Pass the Device</h1>
+
+    <p>Hand the device to <strong><%= @player.name %></strong>.</p>
+    <p>Everyone else should look away.</p>
+
+    <%= button_to "Reveal My Role", reveal_role_game_path(@game),
+        class: "btn btn-primary", form: { data: { turbo: false } } %>
+  <% end %>
+</div>
