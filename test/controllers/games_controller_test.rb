@@ -131,6 +131,55 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     assert_select "p strong", text: "Alex"
   end
 
+    test "voting for the imposter saves the vote and gives the group a win" do
+    game = create_reveal_game
+    game.update!(status: "playing")
+    imposter = game.players.find_by!(is_imposter: true)
+
+    post start_voting_game_path(game)
+    assert_response :see_other
+    assert_equal "voting", game.reload.status
+
+    post vote_game_path(game), params: { player_id: imposter.id }
+    assert_response :see_other
+    assert_equal "completed", game.reload.status
+    assert_equal imposter.id, game.voted_player_id
+
+    follow_redirect!
+    assert_select "h2", text: "The group wins!"
+    assert_select "p", text: "The imposter was Blair."
+  end
+
+    test "voting for a regular player gives the imposter a win" do
+    game = create_reveal_game
+    game.update!(status: "voting")
+    regular_player = game.players.find_by!(is_imposter: false)
+
+    post vote_game_path(game), params: { player_id: regular_player.id }
+
+    assert_response :see_other
+    assert_equal regular_player.id, game.reload.voted_player_id
+
+    follow_redirect!
+    assert_select "h2", text: "The imposter wins!"
+    assert_select "p", text: "The group voted for Alex."
+    assert_select "p", text: "The imposter was Blair."
+    assert_select "p", text: "The secret word was #{game.secret_word.word}."
+  end
+
+    test "rejects a vote for a player from another game" do
+    game = create_reveal_game
+    game.update!(status: "voting")
+    other_player = create_reveal_game.players.first
+
+    post vote_game_path(game), params: { player_id: other_player.id }
+
+    assert_response 422
+    assert_select ".alert-danger", text: "Choose a player in this game."
+    assert_equal "voting", game.reload.status
+    assert_nil game.voted_player_id
+  end
+
   private
 
   def assert_setup_rejected(attributes)

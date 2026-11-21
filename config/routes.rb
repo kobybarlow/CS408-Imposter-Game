@@ -5,6 +5,8 @@ Rails.application.routes.draw do
       post :reveal_role
       post :pass_role
       post :next_turn
+      post :start_voting
+      post :vote
     end
   end
   resources :categories do

@@ -4,8 +4,8 @@ class Game < ApplicationRecord
 
   has_many :players, -> { order(:turn_order) }, dependent: :destroy
 
-  validates :status, inclusion: { in: %w[setup playing completed] }
   validates :secret_word, presence: true, unless: -> { status == "setup" }
+  validates :status, inclusion: { in: %w[setup playing voting completed] }
 
   validate :secret_word_matches_category
 

@@ -1,0 +1,23 @@
+<div class="container mt-4">
+  <h1>Vote for the Imposter</h1>
+  <p>Discuss as a group and choose one player.</p>
+
+
+<% if @error %>
+  <p class="alert alert-danger" role="alert"><%= @error %></p>
+<% end %>
+  <%= form_with url: vote_game_path(@game), method: :post do |form| %>
+  <fieldset>
+    <legend>Who do you think is the imposter?</legend>
+
+    <% @game.players.each do |player| %>
+      <div>
+        <%= form.radio_button :player_id, player.id, required: true %>
+        <%= form.label :player_id, player.name, value: player.id %>
+      </div>
+    <% end %>
+  </fieldset>
+
+  <%= form.submit "Submit Vote", class: "btn btn-primary mt-3" %>
+<% end %>
+</div>

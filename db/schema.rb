@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_12_225032) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_21_000223) do
   create_table "categories", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -23,6 +23,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_12_225032) do
     t.string "status", default: "setup", null: false
     t.integer "reveal_position", default: 1, null: false
     t.integer "clue_position", default: 1, null: false
+    t.integer "voted_player_id"
     t.index ["category_id"], name: "index_games_on_category_id"
     t.index ["secret_word_id"], name: "index_games_on_secret_word_id"
   end

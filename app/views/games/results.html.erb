@@ -1,0 +1,19 @@
+<div class="container mt-4">
+  <h1>Game Results</h1>
+
+  <% if @voted_player && @imposter %>
+    <% if @voted_player == @imposter %>
+      <h2>The group wins!</h2>
+    <% else %>
+      <h2>The imposter wins!</h2>
+    <% end %>
+
+    <p>The group voted for <strong><%= @voted_player.name %></strong>.</p>
+    <p>The imposter was <strong><%= @imposter.name %></strong>.</p>
+    <p>The secret word was <strong><%= @game.secret_word.word %></strong>.</p>
+  <% else %>
+    <p>No voting result is available for this game.</p>
+  <% end %>
+
+  <%= link_to "Play Again", new_game_path, class: "btn btn-primary" %>
+</div>

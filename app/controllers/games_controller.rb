@@ -58,6 +58,12 @@ class GamesController < ApplicationController
     if @game.status == "playing"
       @current_player = @game.players.find_by!(turn_order: @game.clue_position)
       render :play
+    elsif @game.status == "voting"
+  render :voting
+    elsif @game.status == "completed"
+      @voted_player = @game.players.find_by(id: @game.voted_player_id)
+      @imposter = @game.players.find_by(is_imposter: true)
+      render :results
     end
   end
   def reveal
@@ -110,5 +116,37 @@ class GamesController < ApplicationController
     end
 
     redirect_to game_path(game), status: :see_other
+  end
+
+  def start_voting
+    game = Game.find(params[:id])
+
+    game.with_lock do
+      game.update!(status: "voting") if game.status == "playing"
+    end
+
+    redirect_to game_path(game), status: :see_other
+  end
+
+  def vote
+    @game = Game.find(params[:id])
+
+    @game.with_lock do
+      if @game.status == "voting"
+        player = @game.players.find_by(id: params[:player_id])
+
+        if player
+          @game.update!(voted_player_id: player.id, status: "completed")
+        else
+          @error = "Choose a player in this game."
+        end
+      end
+    end
+
+    if @error
+      render :voting, status: 422
+    else
+      redirect_to game_path(@game), status: :see_other
+    end
   end
 end

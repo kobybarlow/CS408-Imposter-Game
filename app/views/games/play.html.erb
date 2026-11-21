@@ -13,4 +13,7 @@
 <%= button_to "Next Turn", next_turn_game_path(@game),
     params: { position: @current_player.turn_order },
     class: "btn btn-primary" %>
+
+<%= button_to "Start Voting", start_voting_game_path(@game),
+    class: "btn btn-secondary" %>
 </div>
